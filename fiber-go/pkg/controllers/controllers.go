@@ -12,7 +12,10 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	v1types "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	appsv1 "k8s.io/client-go/applyconfigurations/apps/v1"
+	"k8s.io/apimachinery/pkg/types"
+
+	// appsv1 "k8s.io/client-go/applyconfigurations/apps/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
@@ -32,7 +35,7 @@ type Responce struct {
 	ResyncAfterSeconds float32                `json:"resyncAfterSeconds"`
 }
 
-func getConfig(body []byte) any{
+func getConfig(body []byte) any {
 
 	log.Println("Getting raw body")
 	request := string(body)
@@ -54,13 +57,13 @@ func getConfig(body []byte) any{
 	return obj
 }
 
-func addNodeAffinity(nodeLabel string, deployment *v1.Deployment) (*v1.Deployment){
+func addNodeAffinity(nodeLabel string, deployment *v1.Deployment) *v1.Deployment {
 	// Add affinity
 	var nodeSelectorTerms []v1types.NodeSelectorTerm
 	newTerm := v1types.NodeSelectorTerm{
 		MatchExpressions: []v1types.NodeSelectorRequirement{
 			{
-				Key: nodeLabel,
+				Key:      nodeLabel,
 				Operator: v1types.NodeSelectorOpExists,
 			},
 		},
@@ -78,6 +81,15 @@ func addNodeAffinity(nodeLabel string, deployment *v1.Deployment) (*v1.Deploymen
 	return deployment
 }
 
+func deploymentToJSON(deployment *v1.Deployment) ([]byte, error) {
+	deploymentUnstructured, err := runtime.DefaultUnstructuredConverter.ToUnstructured(deployment)
+	if err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(deploymentUnstructured)
+}
+
 func ChangeConfig(c *fiber.Ctx) error {
 
 	log.Println("Getting deployment")
@@ -87,6 +99,9 @@ func ChangeConfig(c *fiber.Ctx) error {
 	log.Println("Forming node affinity")
 	newDeployment = addNodeAffinity("cloudreef.node", newDeployment)
 
+	yamlDeploy, err := deploymentToJSON(newDeployment)
+	checkerr(err)
+
 	log.Println("Connecting to cluster")
 	config, err := rest.InClusterConfig()
 	checkerr(err)
@@ -94,15 +109,11 @@ func ChangeConfig(c *fiber.Ctx) error {
 	checkerr(err)
 	deploymentClient := clientSet.AppsV1().Deployments("default")
 
-	log.Println("Extracting deployment")
-	extractedDeployment, err := appsv1.ExtractDeployment(newDeployment, "kubectl-patch")
-	checkerr(err)
-
 	log.Println("Applying new config")
-	_, err = deploymentClient.Apply(context.Background(), extractedDeployment, metav1.ApplyOptions{FieldManager: "application/apply-patch"})
+	_, err = deploymentClient.Patch(context.Background(), newDeployment.Name, types.StrategicMergePatchType, yamlDeploy, metav1.PatchOptions{})
 	checkerr(err)
 	log.Println("Successfully applied")
-	
+
 	resp := Responce{
 		Labels: map[string]string{
 			"version": "changed",
