@@ -1,0 +1,19 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: DecoratorController
+metadata:
+  name: service-per-pod
+spec:
+  resources:
+  - apiVersion: apps/v1
+    resource: deployments
+    annotationSelector:
+      matchExpressions:
+      - {key: cloud, operator: Exists}
+  attachments:
+  - apiVersion: v1
+    resource: services
+  hooks:
+    sync:
+      webhook:
+        url: http://fiber-deploy-5d161bb6/api/v1/cluster
+        timeout: 10s
