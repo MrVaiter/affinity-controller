@@ -6,9 +6,9 @@ spec:
   resources:
   - apiVersion: apps/v1
     resource: deployments
-    annotationSelector:
+    labelSelector:
       matchExpressions:
-      - {key: cloud, operator: Exists}
+      - {key: status, operator: In, values: ["to-change"]}
   attachments:
   - apiVersion: v1
     resource: services

@@ -4,16 +4,16 @@
         "apiVersion": "metacontroller.k8s.io/v1alpha1",
         "metadata": {
             "name": "service-per-pod",
-            "uid": "826c3a84-e4a5-4e2f-8419-9ecbcab50747",
-            "resourceVersion": "110381",
+            "uid": "f1d4e510-7f63-4584-96a6-8277ee40658a",
+            "resourceVersion": "28380",
             "generation": 1,
-            "creationTimestamp": "2023-11-06T08:47:31Z",
+            "creationTimestamp": "2023-11-08T11:01:48Z",
             "managedFields": [
                 {
-                    "manager": "pulumi-kubernetes-87e3c5e7",
+                    "manager": "pulumi-kubernetes-7289f59c",
                     "operation": "Apply",
                     "apiVersion": "metacontroller.k8s.io/v1alpha1",
-                    "time": "2023-11-06T08:47:31Z",
+                    "time": "2023-11-08T11:01:48Z",
                     "fieldsType": "FieldsV1",
                     "fieldsV1": {
                         "f:spec": {
@@ -56,7 +56,7 @@
             "hooks": {
                 "sync": {
                     "webhook": {
-                        "url": "http://fiber-deploy-0ede330d:3000/api/v1/deccontrol",
+                        "url": "http://fiber-deploy-effc1347:3000/api/v1/deccontrol",
                         "timeout": "10s"
                     }
                 }
@@ -71,9 +71,9 @@
             "annotations": {
                 "cloud": "reef",
                 "deployment.kubernetes.io/revision": "1",
-                "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{\"cloud\":\"reef\"},\"labels\":{\"app\":\"nginx\"},\"name\":\"nginx-deployment1\",\"namespace\":\"default\"},\"spec\":{\"replicas\":3,\"selector\":{\"matchLabels\":{\"app\":\"nginx\"}},\"template\":{\"metadata\":{\"labels\":{\"app\":\"nginx\"}},\"spec\":{\"containers\":[{\"image\":\"nginx:1.14.2\",\"name\":\"nginx\",\"ports\":[{\"containerPort\":80}]}]}}}}\n"
+                "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{\"cloud\":\"reef\"},\"labels\":{\"app\":\"nginx\"},\"name\":\"nginx-deployment2\",\"namespace\":\"default\"},\"spec\":{\"replicas\":2,\"selector\":{\"matchLabels\":{\"app\":\"nginx\"}},\"template\":{\"metadata\":{\"labels\":{\"app\":\"nginx\"}},\"spec\":{\"containers\":[{\"image\":\"nginx:1.14.2\",\"name\":\"nginx\",\"ports\":[{\"containerPort\":80}]}]}}}}\n"
             },
-            "creationTimestamp": "2023-11-06T08:36:32Z",
+            "creationTimestamp": "2023-11-08T11:01:00Z",
             "generation": 1,
             "labels": {
                 "app": "nginx",
@@ -146,21 +146,7 @@
                     },
                     "manager": "kubectl-client-side-apply",
                     "operation": "Update",
-                    "time": "2023-11-06T08:36:32Z"
-                },
-                {
-                    "apiVersion": "apps/v1",
-                    "fieldsType": "FieldsV1",
-                    "fieldsV1": {
-                        "f:metadata": {
-                            "f:labels": {
-                                "f:version": {}
-                            }
-                        }
-                    },
-                    "manager": "metacontroller",
-                    "operation": "Update",
-                    "time": "2023-11-06T08:36:32Z"
+                    "time": "2023-11-08T11:01:00Z"
                 },
                 {
                     "apiVersion": "apps/v1",
@@ -203,17 +189,31 @@
                     "manager": "kube-controller-manager",
                     "operation": "Update",
                     "subresource": "status",
-                    "time": "2023-11-06T08:36:34Z"
+                    "time": "2023-11-08T11:01:02Z"
+                },
+                {
+                    "apiVersion": "apps/v1",
+                    "fieldsType": "FieldsV1",
+                    "fieldsV1": {
+                        "f:metadata": {
+                            "f:labels": {
+                                "f:version": {}
+                            }
+                        }
+                    },
+                    "manager": "metacontroller",
+                    "operation": "Update",
+                    "time": "2023-11-08T11:01:48Z"
                 }
             ],
-            "name": "nginx-deployment1",
+            "name": "nginx-deployment2",
             "namespace": "default",
-            "resourceVersion": "109809",
-            "uid": "a3b14f23-f93d-4ea4-b1bb-4bc94ff13a24"
+            "resourceVersion": "28385",
+            "uid": "4dfdd97c-7de3-4276-a962-60842475062d"
         },
         "spec": {
             "progressDeadlineSeconds": 600,
-            "replicas": 3,
+            "replicas": 2,
             "revisionHistoryLimit": 10,
             "selector": {
                 "matchLabels": {
@@ -260,29 +260,29 @@
             }
         },
         "status": {
-            "availableReplicas": 3,
+            "availableReplicas": 2,
             "conditions": [
                 {
-                    "lastTransitionTime": "2023-11-06T08:36:34Z",
-                    "lastUpdateTime": "2023-11-06T08:36:34Z",
+                    "lastTransitionTime": "2023-11-08T11:01:02Z",
+                    "lastUpdateTime": "2023-11-08T11:01:02Z",
                     "message": "Deployment has minimum availability.",
                     "reason": "MinimumReplicasAvailable",
                     "status": "True",
                     "type": "Available"
                 },
                 {
-                    "lastTransitionTime": "2023-11-06T08:36:32Z",
-                    "lastUpdateTime": "2023-11-06T08:36:34Z",
-                    "message": "ReplicaSet \"nginx-deployment1-85996f8dbd\" has successfully progressed.",
+                    "lastTransitionTime": "2023-11-08T11:01:00Z",
+                    "lastUpdateTime": "2023-11-08T11:01:02Z",
+                    "message": "ReplicaSet \"nginx-deployment2-cbdccf466\" has successfully progressed.",
                     "reason": "NewReplicaSetAvailable",
                     "status": "True",
                     "type": "Progressing"
                 }
             ],
             "observedGeneration": 1,
-            "readyReplicas": 3,
-            "replicas": 3,
-            "updatedReplicas": 3
+            "readyReplicas": 2,
+            "replicas": 2,
+            "updatedReplicas": 2
         }
     },
     "attachments": {

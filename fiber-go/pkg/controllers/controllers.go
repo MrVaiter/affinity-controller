@@ -14,7 +14,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	// appsv1 "k8s.io/client-go/applyconfigurations/apps/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -40,10 +39,12 @@ func getConfig(body []byte) any {
 	log.Println("Getting raw body")
 	request := string(body)
 
+	// Extracting resourse
 	start := strings.Index(request, "\"object\"")
 	end := strings.LastIndex(request, ",\"attachments\":")
 	request = request[start:end]
 
+	// Extracting config from annotation
 	start = strings.Index(request, "{\\\"apiVersion\\\"")
 	end = strings.LastIndex(request, "\\n\"")
 	request = request[start:end]
@@ -97,7 +98,8 @@ func ChangeConfig(c *fiber.Ctx) error {
 	newDeployment := obj.(*v1.Deployment)
 
 	log.Println("Forming node affinity")
-	newDeployment = addNodeAffinity("cloudreef.node", newDeployment)
+	targetNode := newDeployment.Labels["target-node"] 
+	newDeployment = addNodeAffinity(targetNode, newDeployment)
 
 	yamlDeploy, err := deploymentToJSON(newDeployment)
 	checkerr(err)
@@ -116,7 +118,7 @@ func ChangeConfig(c *fiber.Ctx) error {
 
 	resp := Responce{
 		Labels: map[string]string{
-			"version": "changed",
+			"status": "changed",
 		},
 		ResyncAfterSeconds: 10,
 	}
